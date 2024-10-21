@@ -10,16 +10,20 @@ interface SelectDropDownProps {
     selectedItem: string | number,
     onSelect: Dispatch<SetStateAction<string | number>>,
     selectedItemColor?: string
+    setDisplay: Dispatch<SetStateAction<"flex" | "none">>,
 }
 
-const SelectDropdown = ({ listOptions, display, dropdownContainerStyle, dropdownItemStyle, onSelect, selectedItem, selectedItemColor }: SelectDropDownProps) => {
+const SelectDropdown = ({ listOptions, display, dropdownContainerStyle, dropdownItemStyle, onSelect, selectedItem, selectedItemColor, setDisplay }: SelectDropDownProps) => {
 
     return (
         <View style={[styles.dropdownContainer, { display: display }, dropdownContainerStyle]}>
             {listOptions.map((item: string | number, index: number) => {
                 return (<TouchableOpacity key={index}
                     style={[styles.dropdownItem, dropdownItemStyle, { backgroundColor: item == selectedItem ? selectedItemColor ?? "#eee" : "#fff" }]}
-                    onPress={() => onSelect(item)}
+                    onPress={() => {
+                        onSelect(item);
+                        setDisplay("none")
+                    }}
                 ><Text>{item}</Text></TouchableOpacity>)
             })}
         </View>
@@ -34,12 +38,12 @@ const styles = StyleSheet.create({
         shadowColor: "#ccc",
         shadowOffset: {
             width: 0,
-            height: 5,
+            height: 7,
         },
         shadowRadius: 2,
         shadowOpacity: 0.3,
         backgroundColor: "#fff",
-        paddingBottom: 15,
+
 
     },
     dropdownItem: {
