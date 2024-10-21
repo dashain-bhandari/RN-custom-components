@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
+import { Modal, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { TouchableOpacity } from 'react-native';
 
@@ -15,8 +15,11 @@ interface SelectDropDownProps {
 
 const SelectDropdown = ({ listOptions, display, dropdownContainerStyle, dropdownItemStyle, onSelect, selectedItem, selectedItemColor, setDisplay }: SelectDropDownProps) => {
 
+    if(display!="flex"){
+        return null;
+    }
     return (
-        <View style={[styles.dropdownContainer, { display: display }, dropdownContainerStyle]}>
+      <View style={[styles.dropdownContainer,  dropdownContainerStyle]}>
             {listOptions.map((item: string | number, index: number) => {
                 return (<TouchableOpacity key={index}
                     style={[styles.dropdownItem, dropdownItemStyle, { backgroundColor: item == selectedItem ? selectedItemColor ?? "#eee" : "#fff" }]}
@@ -27,6 +30,7 @@ const SelectDropdown = ({ listOptions, display, dropdownContainerStyle, dropdown
                 ><Text>{item}</Text></TouchableOpacity>)
             })}
         </View>
+
     )
 }
 
@@ -42,7 +46,13 @@ const styles = StyleSheet.create({
         },
         shadowRadius: 2,
         shadowOpacity: 0.3,
-        backgroundColor: "#fff",
+       
+        position:"absolute",
+        zIndex:10,
+        top: 40,
+        left: 0,
+        right: 0,
+       
 
 
     },
