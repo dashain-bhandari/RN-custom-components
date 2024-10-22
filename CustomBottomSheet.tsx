@@ -5,9 +5,12 @@ import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue,
 
 const { width, height } = Dimensions.get("screen");
 
-const CustomBottomSheet = forwardRef((props: { children: React.ReactNode }, ref) => {
+const CustomBottomSheet = forwardRef((props: { children: React.ReactNode, initialHeight?: number, scrollable?: boolean }, ref) => {
 
     const translateY = useSharedValue(0);
+    const ht = props.initialHeight || 3
+    const scrollable = props.scrollable ?? true
+
 
     const context = useSharedValue({ y: 0 });
 
@@ -16,20 +19,22 @@ const CustomBottomSheet = forwardRef((props: { children: React.ReactNode }, ref)
             y: translateY.value
         }
     }).onUpdate((event) => {
-        console.log(event.translationY)//event chai starting position bata suru hucnha so 1.5 ma yo 0 huncha, but context le grda bottom ma 0 banaucha translateY ko value
-        translateY.value = event.translationY + context.value.y
+        // console.log(event.translationY)event chai starting position bata suru hucnha so 1.5 ma yo 0 huncha, but context le grda bottom ma 0 banaucha translateY ko value
+        if (scrollable) {
+            translateY.value = event.translationY + context.value.y
 
 
-        if (event.translationY < 0) {
-            translateY.value = withTiming(-0.8 * height)
-        }
-        if (event.translationY > 0) {
-            translateY.value = withTiming(-height / 3)
+            if (event.translationY < 0) {
+                translateY.value = withTiming(-0.8 * height)
+            }
+            if (event.translationY > 0) {
+                translateY.value = withTiming(-height / ht)
+            }
         }
     });
 
     useEffect(() => {
-        translateY.value = withTiming(-height /3, { duration: 500 })
+        translateY.value = withTiming(-height / ht, { duration: 700 })
     }, []);
 
     const animatedSheetStyle = useAnimatedStyle(() => {
@@ -51,7 +56,7 @@ const CustomBottomSheet = forwardRef((props: { children: React.ReactNode }, ref)
     return (
         <GestureDetector gesture={gesture}>
             <Animated.View style={[styles.container, animatedSheetStyle]}>
-                <View style={styles.line}>
+                <View style={[styles.line,{display:scrollable?"flex":"none"}]}>
                 </View>
                 {
                     props.children
@@ -77,10 +82,11 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30
     },
     line: {
+        
         width: 75,
         height: 4,
         backgroundColor: "#bbb",
-        marginVertical: 15,
+        marginTop: 15,
         borderRadius: 2,
         alignSelf: "center"
     }
